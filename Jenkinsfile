@@ -10,20 +10,38 @@ pipeline {
         PROJECT_NAME = "station-ski"
         GIT_REPO = "https://github.com/HanineBgr/5SIM3_G3_Station_ski"
         BRANCH_NAME = "main"
+        SONAR_URL = "http://192.168.33.10:9000"
+        SONAR_TOKEN = credentials('223JFT4307ons!')
     }
 
     stages {
-        stage('Clone') {
+        stage('GIT') {
             steps {
-                echo 'Cloning Git repository...'
+                echo 'Getting project from git...'
                 git branch: "${BRANCH_NAME}", url: "${GIT_REPO}"
             }
         }
         
-        stage('Build') {
+        stage('MVN CLEAN') {
             steps {
-                echo 'Building the project with Maven...'
-                sh 'mvn clean package -DskipTests'
+                echo 'Running Maven clean...'
+                sh 'mvn clean'
+            }
+        }
+
+        stage('MVN COMPILE') {
+            steps {
+                echo 'Running Maven compile...'
+                sh 'mvn compile'
+            }
+        }
+        
+        stage('SonarQube Analysis') {
+            steps {
+                echo 'Running SonarQube analysis...'
+                withSonarQubeEnv('SonarQube') { // Ensure Jenkins SonarQube configuration matches this name
+                    sh 'mvn sonar:sonar -Dsonar.projectKey=${PROJECT_NAME} -Dsonar.host.url=${SONAR_URL} -Dsonar.login=${SONAR_TOKEN}'
+                }
             }
         }
     }
@@ -33,10 +51,10 @@ pipeline {
             echo 'Pipeline completed.'
         }
         success {
-            echo 'Build and deployment succeeded.'
+            echo 'SUCCESS.'
         }
         failure {
-            echo 'Build or deployment failed.'
+            echo 'FAIL.'
         }
     }
 }
