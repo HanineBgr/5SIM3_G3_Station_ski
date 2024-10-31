@@ -11,7 +11,7 @@ pipeline {
         GIT_REPO = "https://github.com/HanineBgr/5SIM3_G3_Station_ski"
         BRANCH_NAME = "main"
         SONAR_URL = "http://192.168.33.10:9000"
-        SONAR_TOKEN = credentials('223JFT4307ons!')
+        SONAR_TOKEN = credentials('squ_6452bf5c8aa2dee5d4d2186e46019d9a788362fc')
     }
 
     stages {
