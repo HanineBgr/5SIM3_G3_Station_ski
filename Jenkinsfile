@@ -46,7 +46,7 @@ pipeline {
             steps {
                 echo 'Running SonarQube analysis...'
                 withSonarQubeEnv('SonarQube') { // Ensure Jenkins SonarQube configuration matches this name
-                    sh 'mvn sonar:sonar -Dsonar.password=223JFT4307ons! -Dsonar.host.url=${SONAR_URL} -Dsonar.login=admin' -Dmaven.test.skip=true'
+                    sh 'mvn sonar:sonar -Dsonar.password=223JFT4307ons! -Dsonar.host.url=${SONAR_URL} -Dsonar.login=admin -Dmaven.test.skip=true'
                 }
             }
         }
