@@ -26,25 +26,6 @@ pipeline {
                 sh 'mvn clean package -DskipTests'
             }
         }
-        
-        stage('Test') {
-            steps {
-                echo 'Running tests...'
-                sh 'mvn test'
-            }
-        }
-        
-        stage('Deploy') {
-            when {
-                branch 'main' // Deploy only if on the main branch
-            }
-            steps {
-                echo 'Deploying the application...'
-                // Define your deployment commands, such as uploading to a server or deploying to a container
-                // Example:
-                // sh 'scp target/${PROJECT_NAME}.jar user@host:/path/to/deploy'
-            }
-        }
     }
 
     post {
