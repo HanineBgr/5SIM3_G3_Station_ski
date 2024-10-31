@@ -16,7 +16,7 @@ pipeline {
         stage('Clone') {
             steps {
                 echo 'Cloning Git repository...'
-                git branch: "${main}", url: "${5SIM3_G3_Station_ski}"
+                git branch: "${BRANCH_NAME}", url: "${GIT_REPO}"
             }
         }
         
