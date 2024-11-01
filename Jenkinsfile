@@ -35,21 +35,18 @@ pipeline {
                 sh 'mvn compile'
             }
         }
+
+        stage('Unit Tests') {
+            steps {
+                sh 'mvn test'
+            }
+        }
         
         stage ('SonarQube') {
             steps {
             sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=223JFT4307ons! -Dmaven.test.skip=true';
             }
         }
-        
-        /*stage('SonarQube Analysis') {
-            steps {
-                echo 'Running SonarQube analysis...'
-                withSonarQubeEnv('SonarQube') { // Ensure Jenkins SonarQube configuration matches this name
-                    sh 'mvn sonar:sonar -Dsonar.password=223JFT4307ons! -Dsonar.host.url=${SONAR_URL} -Dsonar.login=admin -Dmaven.test.skip=true'
-                }
-            }
-        }*/
     }
 
     post {
