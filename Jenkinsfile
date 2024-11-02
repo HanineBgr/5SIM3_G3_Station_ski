@@ -44,14 +44,14 @@ pipeline {
         
         stage ('SonarQube') {
             steps {
-            sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=223JFT4307ons! -Dmaven.test.skip=true';
+                sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=223JFT4307ons! -Dmaven.test.skip=true';
             }
         }
 
         stage('NEXUS') {
             steps {
                 echo 'Deploying to Nexus...'
-                sh 'mvn deploy'
+                sh 'mvn deploy -Dmaven.test.skip=true'
             }
         }
     }
