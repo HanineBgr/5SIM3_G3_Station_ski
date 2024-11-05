@@ -5,117 +5,146 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import tn.esprit.spring.controllers.SubscriptionRestController;
 import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.TypeSubscription;
-import tn.esprit.spring.services.ISubscriptionServices;
+import tn.esprit.spring.repository.SubscriptionRepository;
+import tn.esprit.spring.services.SubscriptionServiceImpl;
 
 import java.time.LocalDate;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
-import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @ExtendWith(MockitoExtension.class)
-class GestionStationSkiApplicationTests {
+public class GestionStationSkiApplicationTests {
 
-	private MockMvc mockMvc;
+    @Mock
+    private SubscriptionRepository subscriptionRepository;
 
-	@Mock
-	private ISubscriptionServices subscriptionServices;
+    @InjectMocks
+    private SubscriptionServiceImpl subscriptionService;
 
-	@InjectMocks
-	private SubscriptionRestController subscriptionRestController;
+    private Subscription subscription;
+    private List<Subscription> subscriptionList;
 
-	@BeforeEach
-	void setUp() {
-		MockitoAnnotations.openMocks(this);
-		mockMvc = MockMvcBuilders.standaloneSetup(subscriptionRestController).build();
-	}
+    @BeforeEach
+    void setUp() {
+        // Initialize a single Subscription object
+        subscription = new Subscription();
+        subscription.setNumSub(1L);
+        subscription.setStartDate(LocalDate.parse("2024-10-01"));
+        subscription.setEndDate(LocalDate.parse("2024-11-01"));
+        subscription.setPrice(100.0f);
+        subscription.setTypeSub(TypeSubscription.MONTHLY);
 
-	@Test
-	void testAddSubscription() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-10-01"), LocalDate.parse("2024-11-01"), 100.0f, TypeSubscription.MONTHLY);
-		when(subscriptionServices.addSubscription(any(Subscription.class))).thenReturn(subscription);
+        // Initialize list of Subscription objects
+        Subscription subscription1 = new Subscription(2L, LocalDate.parse("2024-05-01"), LocalDate.parse("2024-06-01"), 150.0f, TypeSubscription.MONTHLY);
+        Subscription subscription2 = new Subscription(3L, LocalDate.parse("2024-07-01"), LocalDate.parse("2024-08-01"), 200.0f, TypeSubscription.YEARLY);
 
-		mockMvc.perform(post("/subscription/add")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"startDate\": \"2024-10-01\", \"endDate\": \"2024-11-01\", \"price\": 100.0, \"typeSub\": \"MONTHLY\"}"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.numSub").value(1))
-				.andExpect(jsonPath("$.price").value(100.0))
-				.andExpect(jsonPath("$.typeSub").value("MONTHLY"));
+        subscriptionList = Arrays.asList(subscription1, subscription2);
+    }
 
-		verify(subscriptionServices, times(1)).addSubscription(any(Subscription.class));
-	}
+    @Test
+    void testRetrieveAllSubscriptions() {
+        // Arrange
+        when(subscriptionRepository.findAll()).thenReturn(subscriptionList);
 
-	@Test
-	void testGetById() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.now(), LocalDate.now().plusMonths(1), 100.0f, TypeSubscription.MONTHLY);
-		when(subscriptionServices.retrieveSubscriptionById(1L)).thenReturn(subscription);
+        // Act
+        List<Subscription> result = subscriptionService.retrieveAllSubscriptions();
 
-		mockMvc.perform(get("/subscription/get/1"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.numSub").value(1))
-				.andExpect(jsonPath("$.price").value(100.0))
-				.andExpect(jsonPath("$.typeSub").value("MONTHLY"));
+        // Assert
+        assertEquals(2, result.size());
+        assertEquals(150.0f, result.get(0).getPrice());
+        verify(subscriptionRepository, times(1)).findAll();
+    }
 
-		verify(subscriptionServices, times(1)).retrieveSubscriptionById(1L);
-	}
+    @Test
+    void testRetrieveSubscriptionById() {
+        // Arrange
+        when(subscriptionRepository.findById(1L)).thenReturn(Optional.of(subscription));
 
-	@Test
-	void testGetSubscriptionsByType() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.now(), LocalDate.now().plusMonths(1), 100.0f, TypeSubscription.MONTHLY);
-		Set<Subscription> subscriptions = Collections.singleton(subscription);
-		when(subscriptionServices.getSubscriptionByType(TypeSubscription.MONTHLY)).thenReturn(subscriptions);
+        // Act
+        Subscription result = subscriptionService.retrieveSubscriptionById(1L);
 
-		mockMvc.perform(get("/subscription/all/MONTHLY"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(1)))
-				.andExpect(jsonPath("$[0].numSub").value(1))
-				.andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));
+        // Assert
+        assertNotNull(result);
+        assertEquals(TypeSubscription.MONTHLY, result.getTypeSub());
+        verify(subscriptionRepository, times(1)).findById(1L);
+    }
 
-		verify(subscriptionServices, times(1)).getSubscriptionByType(TypeSubscription.MONTHLY);
-	}
+    @Test
+    void testAddSubscription() {
+        // Arrange
+        when(subscriptionRepository.save(subscription)).thenReturn(subscription);
 
-	@Test
-	void testUpdateSubscription() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-10-01"), LocalDate.parse("2024-11-01"), 120.0f, TypeSubscription.MONTHLY);
-		when(subscriptionServices.updateSubscription(any(Subscription.class))).thenReturn(subscription);
+        // Act
+        Subscription result = subscriptionService.addSubscription(subscription);
 
-		mockMvc.perform(put("/subscription/update")
-						.contentType(MediaType.APPLICATION_JSON)
-						.content("{\"numSub\": 1, \"startDate\": \"2024-10-01\", \"endDate\": \"2024-11-01\", \"price\": 120.0, \"typeSub\": \"MONTHLY\"}"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.numSub").value(1))
-				.andExpect(jsonPath("$.price").value(120.0))
-				.andExpect(jsonPath("$.typeSub").value("MONTHLY"));
+        // Assert
+        assertNotNull(result);
+        assertEquals(100.0f, result.getPrice());
+        verify(subscriptionRepository, times(1)).save(subscription);
+    }
 
-		verify(subscriptionServices, times(1)).updateSubscription(any(Subscription.class));
-	}
+    @Test
+    void testUpdateSubscription() {
+        // Arrange
+        subscription.setPrice(120.0f);
+        when(subscriptionRepository.save(subscription)).thenReturn(subscription);
 
-	@Test
-	void testGetSubscriptionsByDates() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"), 100.0f, TypeSubscription.MONTHLY);
-		List<Subscription> subscriptions = Collections.singletonList(subscription);
-		when(subscriptionServices.retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(subscriptions);
+        // Act
+        Subscription result = subscriptionService.updateSubscription(subscription);
 
-		mockMvc.perform(get("/subscription/all/2024-01-01/2024-12-31"))
-				.andExpect(status().isOk())
-				.andExpect(jsonPath("$", hasSize(1)))
-				.andExpect(jsonPath("$[0].numSub").value(1))
-				.andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));
+        // Assert
+        assertNotNull(result);
+        assertEquals(120.0f, result.getPrice());
+        verify(subscriptionRepository, times(1)).save(subscription);
+    }
 
-		verify(subscriptionServices, times(1)).retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class));
-	}
+    @Test
+    void testRemoveSubscription() {
+        // Arrange
+        Long subscriptionId = 1L;
+        doNothing().when(subscriptionRepository).deleteById(subscriptionId);
+
+        // Act
+        subscriptionService.removeSubscription(subscriptionId);
+
+        // Assert
+        verify(subscriptionRepository, times(1)).deleteById(subscriptionId);
+    }
+
+    @Test
+    void testGetSubscriptionsByType() {
+        // Arrange
+        when(subscriptionRepository.findSubscriptionsByType(TypeSubscription.MONTHLY)).thenReturn(subscriptionList);
+
+        // Act
+        List<Subscription> result = subscriptionService.getSubscriptionsByType(TypeSubscription.MONTHLY);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        assertEquals(TypeSubscription.MONTHLY, result.get(0).getTypeSub());
+        verify(subscriptionRepository, times(1)).findSubscriptionsByType(TypeSubscription.MONTHLY);
+    }
+
+    @Test
+    void testRetrieveSubscriptionsByDates() {
+        // Arrange
+        when(subscriptionRepository.findSubscriptionsBetweenDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(subscriptionList);
+
+        // Act
+        List<Subscription> result = subscriptionService.retrieveSubscriptionsByDates(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(2, result.size());
+        verify(subscriptionRepository, times(1)).findSubscriptionsBetweenDates(any(LocalDate.class), any(LocalDate.class));
+    }
 }
