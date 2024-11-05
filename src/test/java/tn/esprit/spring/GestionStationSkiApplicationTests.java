@@ -44,7 +44,6 @@ class GestionStationSkiApplicationTests {
 
     @Test
     void addSubscriptionTest() throws Exception {
-        // Creating a Subscription object to mock the returned object
         Subscription subscription = new Subscription();
         subscription.setNumSub(1L); // Set numSub, assuming it's auto-generated
         subscription.setStartDate(LocalDate.of(2024, 10, 1));
@@ -63,12 +62,13 @@ class GestionStationSkiApplicationTests {
                 .andExpect(jsonPath("$.numSub").value(subscription.getNumSub())) // Check if numSub is returned
                 .andExpect(jsonPath("$.price").value(100.0)) // Check if price is correctly returned
                 .andExpect(jsonPath("$.typeSub").value("MONTHLY")) // Check if typeSub is correctly returned
-                .andExpect(jsonPath("$.startDate").value("2024-10-01")) // Verify start date
-                .andExpect(jsonPath("$.endDate").value("2024-11-01")); // Verify end date
+                .andExpect(jsonPath("$.startDate").value("2024-10-01")) // Verify start date format
+                .andExpect(jsonPath("$.endDate").value("2024-11-01")); // Verify end date format
     
         // Verify that the addSubscription method was called once
         verify(subscriptionServices, times(1)).addSubscription(any(Subscription.class));
     }
+
 
 
     @Test
