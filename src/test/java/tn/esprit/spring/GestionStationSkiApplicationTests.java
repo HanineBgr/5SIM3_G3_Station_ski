@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import tn.esprit.spring.entities.Subscription;
 import tn.esprit.spring.entities.TypeSubscription;
-import tn.esprit.spring.repository.SubscriptionRepository;
-import tn.esprit.spring.services.SubscriptionServiceImpl;
+import tn.esprit.spring.repository.ISubscriptionRepository;
+import tn.esprit.spring.services.SubscriptionServicesImpl;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -24,10 +24,10 @@ import static org.mockito.Mockito.*;
 public class GestionStationSkiApplicationTests {
 
     @Mock
-    private SubscriptionRepository subscriptionRepository;
+    private ISubscriptionRepository subscriptionRepository;
 
     @InjectMocks
-    private SubscriptionServiceImpl subscriptionService;
+    private SubscriptionServicesImpl subscriptionServices;
 
     private Subscription subscription;
     private List<Subscription> subscriptionList;
@@ -55,7 +55,7 @@ public class GestionStationSkiApplicationTests {
         when(subscriptionRepository.findAll()).thenReturn(subscriptionList);
 
         // Act
-        List<Subscription> result = subscriptionService.retrieveAllSubscriptions();
+        List<Subscription> result = subscriptionServices.retrieveAllSubscriptions();
 
         // Assert
         assertEquals(2, result.size());
@@ -69,7 +69,7 @@ public class GestionStationSkiApplicationTests {
         when(subscriptionRepository.findById(1L)).thenReturn(Optional.of(subscription));
 
         // Act
-        Subscription result = subscriptionService.retrieveSubscriptionById(1L);
+        Subscription result = subscriptionServices.retrieveSubscriptionById(1L);
 
         // Assert
         assertNotNull(result);
@@ -83,7 +83,7 @@ public class GestionStationSkiApplicationTests {
         when(subscriptionRepository.save(subscription)).thenReturn(subscription);
 
         // Act
-        Subscription result = subscriptionService.addSubscription(subscription);
+        Subscription result = subscriptionServices.addSubscription(subscription);
 
         // Assert
         assertNotNull(result);
@@ -98,7 +98,7 @@ public class GestionStationSkiApplicationTests {
         when(subscriptionRepository.save(subscription)).thenReturn(subscription);
 
         // Act
-        Subscription result = subscriptionService.updateSubscription(subscription);
+        Subscription result = subscriptionServices.updateSubscription(subscription);
 
         // Assert
         assertNotNull(result);
@@ -113,7 +113,7 @@ public class GestionStationSkiApplicationTests {
         doNothing().when(subscriptionRepository).deleteById(subscriptionId);
 
         // Act
-        subscriptionService.removeSubscription(subscriptionId);
+        subscriptionServices.removeSubscription(subscriptionId);
 
         // Assert
         verify(subscriptionRepository, times(1)).deleteById(subscriptionId);
@@ -125,7 +125,7 @@ public class GestionStationSkiApplicationTests {
         when(subscriptionRepository.findSubscriptionsByType(TypeSubscription.MONTHLY)).thenReturn(subscriptionList);
 
         // Act
-        List<Subscription> result = subscriptionService.getSubscriptionsByType(TypeSubscription.MONTHLY);
+        List<Subscription> result = subscriptionServices.getSubscriptionsByType(TypeSubscription.MONTHLY);
 
         // Assert
         assertNotNull(result);
@@ -140,7 +140,7 @@ public class GestionStationSkiApplicationTests {
         when(subscriptionRepository.findSubscriptionsBetweenDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(subscriptionList);
 
         // Act
-        List<Subscription> result = subscriptionService.retrieveSubscriptionsByDates(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
+        List<Subscription> result = subscriptionServices.retrieveSubscriptionsByDates(LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"));
 
         // Assert
         assertNotNull(result);
