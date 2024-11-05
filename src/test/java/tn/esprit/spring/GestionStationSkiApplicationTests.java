@@ -126,7 +126,7 @@ class GestionStationSkiApplicationTests {
     @Test
     public void testGetSubscriptionsByDates() throws Exception {
         // Mock the service to return a list of subscriptions between the given dates
-        when(subscriptionServices.retrieveSubscriptionsByDates(startDate, endDate)).thenReturn(Arrays.asList(subscription1, subscription2));
+        when(subscriptionServices.getSubscriptionsByDates(startDate, endDate)).thenReturn(Arrays.asList(subscription1, subscription2));
 
         // Perform GET request to the endpoint with date parameters
         mockMvc.perform(get("/subscription/all/{date1}/{date2}", startDate, endDate))
