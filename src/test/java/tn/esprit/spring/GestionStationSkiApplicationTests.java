@@ -116,17 +116,26 @@ class GestionStationSkiApplicationTests {
     }
 
     @Test
-    public void retrieveSubscriptionsByDatesTest() throws Exception {
-        // Correct date format: yyyy-MM-dd
-        String startDate = "2024-10-01";
-        String endDate = "2024-10-31";
+    void retrieveSubscriptionsByDatesTest() throws Exception {
+        // Create a subscription with specific start and end dates
+        Subscription subscription = new Subscription(1L, LocalDate.of(2024, 10, 1), LocalDate.of(2024, 10, 31), 100.0f, TypeSubscription.MONTHLY);
+        List<Subscription> subscriptions = Collections.singletonList(subscription);
         
-        mockMvc.perform(get("/subscription/all/{date1}/{date2}", startDate, endDate))
-               .andExpect(status().isOk()) // Expect 200 OK
-               .andExpect(jsonPath("$[0].startDate").value("2024-10-01")) // Check the startDate of the first subscription
-               .andExpect(jsonPath("$[0].endDate").value("2024-10-31"))   // Check the endDate of the first subscription
-               .andExpect(jsonPath("$[0].price").value(100.0))             // Adjust the price based on your mock data
-               .andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));      // Adjust based on your mock data
+        // Mock the service method to return the subscriptions list
+        when(subscriptionServices.getSubscriptionsByDates(Mockito.any(), Mockito.any())).thenReturn(subscriptions);
+    
+        // Perform the GET request with the expected dates in the path
+        mockMvc.perform(get("/subscription/all/{date1}/{date2}", "2024-10-01", "2024-10-31"))
+                .andExpect(status().isOk())  // Expect status 200 OK
+                .andExpect(jsonPath("$", hasSize(1)))  // Expect one subscription in the list
+                .andExpect(jsonPath("$[0].numSub").value(subscription.getNumSub()))  // Check the numSub
+                .andExpect(jsonPath("$[0].startDate").value("2024-10-01"))  // Check the start date
+                .andExpect(jsonPath("$[0].endDate").value("2024-10-31"))  // Check the end date
+                .andExpect(jsonPath("$[0].price").value(100.0))  // Check the price
+                .andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));  // Check the subscription type
+    
+        // Verify that the service method was called once with the expected arguments
+        verify(subscriptionServices, times(1)).getSubscriptionsByDates(Mockito.any(), Mockito.any());
     }
 
 }
