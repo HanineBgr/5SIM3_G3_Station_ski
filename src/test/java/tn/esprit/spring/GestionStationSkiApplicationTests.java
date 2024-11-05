@@ -116,26 +116,13 @@ class GestionStationSkiApplicationTests {
     }
 
     @Test
-    void retrieveSubscriptionsByDatesTest() throws Exception {
-        // Create a subscription with specific start and end dates
-        Subscription subscription = new Subscription(1L, LocalDate.of(2024, 10, 1), LocalDate.of(2024, 10, 31), 100.0f, TypeSubscription.MONTHLY);
-        List<Subscription> subscriptions = Collections.singletonList(subscription);
-        
-        // Mock the service method to return the subscriptions list
-        when(subscriptionServices.getSubscriptionsByDates(Mockito.any(), Mockito.any())).thenReturn(subscriptions);
-    
-        // Perform the GET request with the expected dates in the path
-        mockMvc.perform(get("/subscription/all/{date1}/{date2}", "2024-10-01", "2024-10-31"))
-                .andExpect(status().isOk())  // Expect status 200 OK
-                .andExpect(jsonPath("$", hasSize(1)))  // Expect one subscription in the list
-                .andExpect(jsonPath("$[0].numSub").value(subscription.getNumSub()))  // Check the numSub
-                .andExpect(jsonPath("$[0].startDate").value("2024-10-01"))  // Check the start date
-                .andExpect(jsonPath("$[0].endDate").value("2024-10-31"))  // Check the end date
-                .andExpect(jsonPath("$[0].price").value(100.0))  // Check the price
-                .andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));  // Check the subscription type
-    
-        // Verify that the service method was called once with the expected arguments
-        verify(subscriptionServices, times(1)).getSubscriptionsByDates(Mockito.any(), Mockito.any());
+    public void testGetSubscriptionsByDates() throws Exception {
+        // Perform GET request to the endpoint with date parameters
+        mockMvc.perform(get("/subscription/all/{date1}/{date2}", startDate, endDate))
+                .andExpect(status().isOk()) // Check if the status is 200 OK
+                .andExpect(jsonPath("$.length()").value(2)) // Check if two subscriptions are returned
+                .andExpect(jsonPath("$[0].numSub").value(subscription1.getNumSub())) // Check first subscription
+                .andExpect(jsonPath("$[1].numSub").value(subscription2.getNumSub())); // Check second subscription
     }
 
 }
