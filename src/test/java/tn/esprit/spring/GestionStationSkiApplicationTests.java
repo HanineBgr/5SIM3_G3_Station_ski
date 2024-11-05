@@ -117,16 +117,32 @@ class GestionStationSkiApplicationTests {
 
     @Test
     void retrieveSubscriptionsByDatesTest() throws Exception {
-        Subscription subscription = new Subscription(1L, LocalDate.now(), LocalDate.now().plusMonths(1), 100.0f, TypeSubscription.MONTHLY);
-        List<Subscription> subscriptions = Arrays.asList(subscription);
-        when(subscriptionServices.retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(subscriptions);
-
-        mockMvc.perform(get("/subscription/all/2024-01-01/2024-12-31"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$", hasSize(1)))
-                .andExpect(jsonPath("$[0].numSub").value(subscription.getNumSub()))
-                .andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));
-
-        verify(subscriptionServices, times(1)).retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class));
+        // Set up the expected dates for the test
+        LocalDate startDate = LocalDate.of(2024, 10, 1);
+        LocalDate endDate = LocalDate.of(2024, 11, 1);
+    
+        // Create a mock subscription that will be returned when the service is called
+        Subscription mockSubscription = new Subscription();
+        mockSubscription.setStartDate(startDate);
+        mockSubscription.setEndDate(endDate);
+        mockSubscription.setPrice(100.0f);
+        mockSubscription.setTypeSub(TypeSubscription.MONTHLY);
+    
+        List<Subscription> subscriptions = Arrays.asList(mockSubscription);
+    
+        // Mock the service method to return the list of subscriptions
+        when(subscriptionServices.retrieveSubscriptionsByDates(startDate, endDate)).thenReturn(subscriptions);
+    
+        // Perform the GET request with the path variables for the dates
+        mockMvc.perform(get("/subscription/all/{date1}/{date2}", "2024-10-01", "2024-11-01"))
+                .andExpect(status().isOk())  // Verify the status is OK (200)
+                .andExpect(jsonPath("$[0].startDate").value("2024-10-01"))
+                .andExpect(jsonPath("$[0].endDate").value("2024-11-01"))
+                .andExpect(jsonPath("$[0].price").value(100.0))  // Verify the mock subscription's price
+                .andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));  // Verify the subscription type
+    
+        // Verify that the service method was called with the correct arguments
+        verify(subscriptionServices, times(1)).retrieveSubscriptionsByDates(startDate, endDate);
     }
+
 }
