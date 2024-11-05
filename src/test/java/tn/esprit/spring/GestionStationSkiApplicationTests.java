@@ -17,7 +17,6 @@ import tn.esprit.spring.services.ISubscriptionServices;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
@@ -37,14 +36,26 @@ class GestionStationSkiApplicationTests {
     @InjectMocks
     private SubscriptionRestController subscriptionRestController;
 
+    private LocalDate startDate;
+    private LocalDate endDate;
+    private Subscription subscription1;
+    private Subscription subscription2;
+
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(subscriptionRestController).build();
+
+        // Initialize the start and end dates
+        startDate = LocalDate.of(2024, 1, 1);
+        endDate = LocalDate.of(2024, 12, 31);
+
+        // Initialize the subscription objects
+        subscription1 = new Subscription(1L, startDate, endDate, 100.0f, TypeSubscription.MONTHLY);
+        subscription2 = new Subscription(2L, LocalDate.of(2024, 6, 15), endDate, 150.0f, TypeSubscription.PREMIUM);
     }
 
     @Test
     void addSubscriptionTest() throws Exception {
-        // Create a subscription object with appropriate data
         Subscription subscription = new Subscription();
         subscription.setNumSub(1L);  // numSub will be auto-generated
         subscription.setStartDate(LocalDate.of(2024, 10, 1)); // Set start date
@@ -52,21 +63,18 @@ class GestionStationSkiApplicationTests {
         subscription.setPrice(100.0f); // Set price
         subscription.setTypeSub(TypeSubscription.MONTHLY); // Assuming 'MONTHLY' is a valid type
     
-        // Mock the service call to return the subscription object
         when(subscriptionServices.addSubscription(any(Subscription.class))).thenReturn(subscription);
     
-        // Perform the POST request and validate the response
         mockMvc.perform(post("/subscription/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"startDate\": \"2024-10-01\", \"endDate\": \"2024-11-01\", \"price\": 100.0, \"typeSub\": \"MONTHLY\"}"))
-                .andExpect(status().isOk())  // Check for successful status code
-                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))  // Verify numSub is returned
-                .andExpect(jsonPath("$.price").value(100.0))  // Verify price is returned correctly
-                .andExpect(jsonPath("$.typeSub").value("MONTHLY"))  // Verify subscription type
-                .andExpect(jsonPath("$.startDate").value("2024-10-01"))  // Verify correct start date format
-                .andExpect(jsonPath("$.endDate").value("2024-11-01"));  // Verify correct end date format
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
+                .andExpect(jsonPath("$.price").value(100.0))
+                .andExpect(jsonPath("$.typeSub").value("MONTHLY"))
+                .andExpect(jsonPath("$.startDate").value("2024-10-01"))
+                .andExpect(jsonPath("$.endDate").value("2024-11-01"));
     
-        // Verify that the addSubscription method was called once
         verify(subscriptionServices, times(1)).addSubscription(any(Subscription.class));
     }
 
@@ -117,12 +125,15 @@ class GestionStationSkiApplicationTests {
 
     @Test
     public void testGetSubscriptionsByDates() throws Exception {
+        // Mock the service to return a list of subscriptions between the given dates
+        when(subscriptionServices.retrieveSubscriptionsByDates(startDate, endDate)).thenReturn(Arrays.asList(subscription1, subscription2));
+
         // Perform GET request to the endpoint with date parameters
         mockMvc.perform(get("/subscription/all/{date1}/{date2}", startDate, endDate))
-                .andExpect(status().isOk()) // Check if the status is 200 OK
-                .andExpect(jsonPath("$.length()").value(2)) // Check if two subscriptions are returned
-                .andExpect(jsonPath("$[0].numSub").value(subscription1.getNumSub())) // Check first subscription
-                .andExpect(jsonPath("$[1].numSub").value(subscription2.getNumSub())); // Check second subscription
+                .andExpect(status().isOk())  // Check if the status is 200 OK
+                .andExpect(jsonPath("$.length()").value(2))  // Check if two subscriptions are returned
+                .andExpect(jsonPath("$[0].numSub").value(subscription1.getNumSub()))  // Check first subscription
+                .andExpect(jsonPath("$[1].numSub").value(subscription2.getNumSub()));  // Check second subscription
     }
 
 }
