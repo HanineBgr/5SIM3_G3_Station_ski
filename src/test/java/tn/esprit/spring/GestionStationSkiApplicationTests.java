@@ -44,19 +44,32 @@ class GestionStationSkiApplicationTests {
 
     @Test
     void addSubscriptionTest() throws Exception {
+        // Creating a Subscription object to mock the returned object
         Subscription subscription = new Subscription();
+        subscription.setNumSub(1L); // Set numSub, assuming it's auto-generated
+        subscription.setStartDate(LocalDate.of(2024, 10, 1));
+        subscription.setEndDate(LocalDate.of(2024, 11, 1));
+        subscription.setPrice(100.0f); // Set price
+        subscription.setTypeSub(TypeSubscription.MONTHLY); // Assuming 'MONTHLY' is a valid type
+    
+        // Mock the service call to addSubscription, returning the subscription object
         when(subscriptionServices.addSubscription(any(Subscription.class))).thenReturn(subscription);
-
+    
+        // Perform the POST request and validate the response
         mockMvc.perform(post("/subscription/add")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("{\"startDate\": \"2024-10-01\", \"endDate\": \"2024-11-01\", \"price\": 100.0, \"typeSub\": \"MONTHLY\"}"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
-                .andExpect(jsonPath("$.price").value(100.0))
-                .andExpect(jsonPath("$.typeSub").value("MONTHLY"));
-
+                .andExpect(jsonPath("$.numSub").value(subscription.getNumSub())) // Check if numSub is returned
+                .andExpect(jsonPath("$.price").value(100.0)) // Check if price is correctly returned
+                .andExpect(jsonPath("$.typeSub").value("MONTHLY")) // Check if typeSub is correctly returned
+                .andExpect(jsonPath("$.startDate").value("2024-10-01")) // Verify start date
+                .andExpect(jsonPath("$.endDate").value("2024-11-01")); // Verify end date
+    
+        // Verify that the addSubscription method was called once
         verify(subscriptionServices, times(1)).addSubscription(any(Subscription.class));
     }
+
 
     @Test
     void retrieveSubscriptionByIdTest() throws Exception {
