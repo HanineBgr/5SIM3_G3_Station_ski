@@ -51,7 +51,7 @@ class GestionStationSkiApplicationTests {
 
         // Initialize the subscription objects
         subscription1 = new Subscription(1L, startDate, endDate, 100.0f, TypeSubscription.MONTHLY);
-        subscription2 = new Subscription(2L, LocalDate.of(2024, 6, 15), endDate, 150.0f, TypeSubscription.PREMIUM);
+        subscription2 = new Subscription(2L, LocalDate.of(2024, 6, 15), endDate, 150.0f, TypeSubscription.SEMESTRIEL);
     }
 
     @Test
