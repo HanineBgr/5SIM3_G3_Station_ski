@@ -46,7 +46,7 @@ class GestionStationSkiApplicationTests {
 
 	@Test
 	void testAddSubscription() throws Exception {
-		Subscription subscription = new Subscription(); // Set necessary fields in the Subscription instance
+		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-10-01"), LocalDate.parse("2024-11-01"), 100.0f, TypeSubscription.MONTHLY);
 		when(subscriptionServices.addSubscription(any(Subscription.class))).thenReturn(subscription);
 
 		mockMvc.perform(post("/subscription/add")
@@ -77,7 +77,7 @@ class GestionStationSkiApplicationTests {
 	@Test
 	void testGetSubscriptionsByType() throws Exception {
 		Subscription subscription = new Subscription(1L, LocalDate.now(), LocalDate.now().plusMonths(1), 100.0f, TypeSubscription.MONTHLY);
-		Set<Subscription> subscriptions = Collections.singleton(subscription); // Use this for a single element
+		Set<Subscription> subscriptions = Collections.singleton(subscription);
 		when(subscriptionServices.getSubscriptionByType(TypeSubscription.MONTHLY)).thenReturn(subscriptions);
 
 		mockMvc.perform(get("/subscription/all/MONTHLY"))
@@ -91,7 +91,7 @@ class GestionStationSkiApplicationTests {
 
 	@Test
 	void testUpdateSubscription() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.now(), LocalDate.now().plusMonths(1), 120.0f, TypeSubscription.MONTHLY);
+		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-10-01"), LocalDate.parse("2024-11-01"), 120.0f, TypeSubscription.MONTHLY);
 		when(subscriptionServices.updateSubscription(any(Subscription.class))).thenReturn(subscription);
 
 		mockMvc.perform(put("/subscription/update")
@@ -107,8 +107,8 @@ class GestionStationSkiApplicationTests {
 
 	@Test
 	void testGetSubscriptionsByDates() throws Exception {
-		Subscription subscription = new Subscription(1L, LocalDate.now(), LocalDate.now().plusMonths(1), 100.0f, TypeSubscription.MONTHLY);
-		List<Subscription> subscriptions = Arrays.asList(subscription); // Compatible with Java 8
+		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"), 100.0f, TypeSubscription.MONTHLY);
+		List<Subscription> subscriptions = Arrays.asList(subscription);
 		when(subscriptionServices.retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(subscriptions);
 
 		mockMvc.perform(get("/subscription/all/2024-01-01/2024-12-31"))
