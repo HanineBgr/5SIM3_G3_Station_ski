@@ -16,7 +16,6 @@ import tn.esprit.spring.entities.TypeSubscription;
 import tn.esprit.spring.services.ISubscriptionServices;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -53,7 +52,7 @@ class GestionStationSkiApplicationTests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"startDate\": \"2024-10-01\", \"endDate\": \"2024-11-01\", \"price\": 100.0, \"typeSub\": \"MONTHLY\"}"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
+				.andExpect(jsonPath("$.numSub").value(1))
 				.andExpect(jsonPath("$.price").value(100.0))
 				.andExpect(jsonPath("$.typeSub").value("MONTHLY"));
 
@@ -67,9 +66,9 @@ class GestionStationSkiApplicationTests {
 
 		mockMvc.perform(get("/subscription/get/1"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
-				.andExpect(jsonPath("$.price").value(subscription.getPrice()))
-				.andExpect(jsonPath("$.typeSub").value(subscription.getTypeSub().name()));
+				.andExpect(jsonPath("$.numSub").value(1))
+				.andExpect(jsonPath("$.price").value(100.0))
+				.andExpect(jsonPath("$.typeSub").value("MONTHLY"));
 
 		verify(subscriptionServices, times(1)).retrieveSubscriptionById(1L);
 	}
@@ -83,7 +82,7 @@ class GestionStationSkiApplicationTests {
 		mockMvc.perform(get("/subscription/all/MONTHLY"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(1)))
-				.andExpect(jsonPath("$[0].numSub").value(subscription.getNumSub()))
+				.andExpect(jsonPath("$[0].numSub").value(1))
 				.andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));
 
 		verify(subscriptionServices, times(1)).getSubscriptionByType(TypeSubscription.MONTHLY);
@@ -98,7 +97,7 @@ class GestionStationSkiApplicationTests {
 						.contentType(MediaType.APPLICATION_JSON)
 						.content("{\"numSub\": 1, \"startDate\": \"2024-10-01\", \"endDate\": \"2024-11-01\", \"price\": 120.0, \"typeSub\": \"MONTHLY\"}"))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.numSub").value(subscription.getNumSub()))
+				.andExpect(jsonPath("$.numSub").value(1))
 				.andExpect(jsonPath("$.price").value(120.0))
 				.andExpect(jsonPath("$.typeSub").value("MONTHLY"));
 
@@ -108,13 +107,13 @@ class GestionStationSkiApplicationTests {
 	@Test
 	void testGetSubscriptionsByDates() throws Exception {
 		Subscription subscription = new Subscription(1L, LocalDate.parse("2024-01-01"), LocalDate.parse("2024-12-31"), 100.0f, TypeSubscription.MONTHLY);
-		List<Subscription> subscriptions = Arrays.asList(subscription);
+		List<Subscription> subscriptions = Collections.singletonList(subscription);
 		when(subscriptionServices.retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class))).thenReturn(subscriptions);
 
 		mockMvc.perform(get("/subscription/all/2024-01-01/2024-12-31"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$", hasSize(1)))
-				.andExpect(jsonPath("$[0].numSub").value(subscription.getNumSub()))
+				.andExpect(jsonPath("$[0].numSub").value(1))
 				.andExpect(jsonPath("$[0].typeSub").value("MONTHLY"));
 
 		verify(subscriptionServices, times(1)).retrieveSubscriptionsByDates(any(LocalDate.class), any(LocalDate.class));
