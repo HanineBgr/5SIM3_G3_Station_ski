@@ -24,7 +24,9 @@ public class Subscription implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	Long numSub;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	LocalDate startDate;
+	@JsonFormat(pattern = "yyyy-MM-dd")
 	LocalDate endDate;
 	Float price;
 //	@Enumerated(EnumType.STRING)
