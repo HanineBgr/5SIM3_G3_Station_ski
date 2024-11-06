@@ -1,4 +1,4 @@
 FROM openjdk:17-slim
 EXPOSE 8089
-ADD target/timesheet-devops-1.0.jar timesheet-devops-1.0.jar
-ENTRYPOINT ["java","-jar","/timesheet-devops-1.0.jar"]
+ADD target/station-ski-1.0.jar station-ski-1.0.jar
+ENTRYPOINT ["java", "-jar", "/station-ski-1.0.jar"]
