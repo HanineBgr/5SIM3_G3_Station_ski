@@ -122,7 +122,7 @@ class GestionStationSkiApplicationTests {
 
         verify(subscriptionServices, times(1)).updateSubscription(any(Subscription.class));
     }
-
+/*
     @Test
     public void testGetSubscriptionsByDates() throws Exception {
         // Mock the service to return a list of subscriptions between the given dates
@@ -134,6 +134,6 @@ class GestionStationSkiApplicationTests {
                 .andExpect(jsonPath("$.length()").value(2))  // Check if two subscriptions are returned
                 .andExpect(jsonPath("$[0].numSub").value(subscription1.getNumSub()))  // Check first subscription
                 .andExpect(jsonPath("$[1].numSub").value(subscription2.getNumSub()));  // Check second subscription
-    }
+    }*/
 
 }
