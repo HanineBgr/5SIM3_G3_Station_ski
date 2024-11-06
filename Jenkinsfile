@@ -34,13 +34,13 @@ pipeline {
             }
         }
 
-        stage('Unit Tests') {
+        stage('MOCKITO') {
             steps {
                 sh 'mvn test'
             }
         }
         
-        stage ('SonarQube') {
+        stage ('SONARQUBE') {
             steps {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=223JFT4307ons! -Dmaven.test.skip=true';
             }
