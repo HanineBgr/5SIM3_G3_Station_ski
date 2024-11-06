@@ -51,7 +51,7 @@ pipeline {
         stage('NEXUS') {
             steps {
                 echo 'Deploying to Nexus...'
-                sh 'mvn deploy -Dmaven.test.skip=true'
+                sh 'mvn deploy -Dusername=admin -Dpassword=nexus -Dmaven.test.skip=true'
             }
         }
     }
