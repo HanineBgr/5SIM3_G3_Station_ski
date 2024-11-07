@@ -45,14 +45,20 @@ pipeline {
                 sh 'mvn sonar:sonar -Dsonar.login=admin -Dsonar.password=223JFT4307ons! -Dmaven.test.skip=true';
             }
         }
-/*
+
         stage('NEXUS') {
             steps {
                 echo 'Deploying to Nexus...'
                 sh 'mvn deploy -Dusername=admin -Dpassword=nexus -Dmaven.test.skip=true'
             }
         }
-  */  }
+
+        stage('Building Image') {
+            steps {
+                sh 'docker build -t onsammar/gestion-station-ski-2.0 .'
+            }
+        }
+    }
 
     post {
         always {
