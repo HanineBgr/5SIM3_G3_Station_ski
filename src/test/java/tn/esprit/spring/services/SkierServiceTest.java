@@ -37,7 +37,7 @@ public class SkierServiceTest {
 
     private Skier skier;
 
-    // 1. Test retrieveAllSkiers
+    //Test retrieveAllSkiers
     @Test
     public void testRetrieveAllSkiers() {
         List<Skier> skierList = new ArrayList<>();
@@ -50,8 +50,7 @@ public class SkierServiceTest {
         verify(skierRepository, times(1)).findAll();
     }
 
-
-    // 2. Test addSkier
+    //Test addSkier
     @Test
     public void testAddSkier() {
         Skier skier = new Skier();
@@ -69,30 +68,23 @@ public class SkierServiceTest {
         verify(skierRepository, times(1)).save(skier);
     }
 
-    // 3. Test assignSkierToSubscription
+    //Test assignSkierToSubscription
     @Test
     public void testAssignSkierToSubscription() {
-        // Create a new skier and subscription entity
         Skier skier = new Skier();
         Subscription subscription = new Subscription();
 
-        // Mock repository methods
         when(skierRepository.findById(1L)).thenReturn(Optional.of(skier));
         when(subscriptionRepository.findById(2L)).thenReturn(Optional.of(subscription));
         when(skierRepository.save(any(Skier.class))).thenAnswer(invocation -> invocation.getArgument(0)); // Return the updated skier after save
 
-        // Call the method under test
         Skier result = skierServicesImpl.assignSkierToSubscription(1L, 2L);
 
-        // Assertions to verify results
         assertNotNull(result, "The skier should not be null after assignment.");
         assertEquals(subscription, result.getSubscription(), "The subscription should be assigned to the skier.");
     }
 
-
-
-
-    // 4. Test addSkierAndAssignToCourse
+    //Test addSkierAndAssignToCourse
     @Test
     public void testAddSkierAndAssignToCourse() {
         Skier skier = new Skier();
@@ -110,8 +102,7 @@ public class SkierServiceTest {
         verify(registrationRepository, times(1)).save(any(Registration.class));
     }
 
-
-    // 5. Test removeSkier
+    //Test removeSkier
     @Test
     public void testRemoveSkier() {
         skierServicesImpl.removeSkier(1L);
@@ -119,7 +110,7 @@ public class SkierServiceTest {
         verify(skierRepository, times(1)).deleteById(1L);
     }
 
-    // 6. Test retrieveSkier
+    //Test retrieveSkier
     @Test
     public void testRetrieveSkier() {
         Skier skier = new Skier();
@@ -131,33 +122,25 @@ public class SkierServiceTest {
         verify(skierRepository, times(1)).findById(1L);
     }
 
-    // 7. Test assignSkierToPiste
+    //Test assignSkierToPiste
     @Test
     public void testAssignSkierToPiste() {
-        // Create a new skier and initialize pistes collection
         Skier skier = new Skier();
         skier.setPistes(new HashSet<>());
 
-        // Create a piste entity
         Piste piste = new Piste();
 
-        // Mock repository methods
         when(skierRepository.findById(1L)).thenReturn(Optional.of(skier));
         when(pisteRepository.findById(2L)).thenReturn(Optional.of(piste));
         when(skierRepository.save(any(Skier.class))).thenAnswer(invocation -> invocation.getArgument(0)); // Return the updated skier after save
 
-        // Call the method under test
         Skier result = skierServicesImpl.assignSkierToPiste(1L, 2L);
 
-        // Assertions to verify results
         assertNotNull(result, "The skier should not be null after assignment.");
         assertTrue(result.getPistes().contains(piste), "The piste should be assigned to the skier.");
     }
 
-
-
-
-    // 8. Test retrieveSkiersBySubscriptionType
+    //Test retrieveSkiersBySubscriptionType
     @Test
     public void testRetrieveSkiersBySubscriptionType() {
         List<Skier> skierList = new ArrayList<>();
