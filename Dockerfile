@@ -1,4 +1,10 @@
-FROM openjdk:8-jdk-alpine
-EXPOSE 8080
-ADD target/timesheet-devops-1.0.jar timesheet-devops-1.0.jar
-ENTRYPOINT ["java","-jar","/timesheet-devops-1.0.jar"]
+FROM openjdk:11
+
+# Set the working directory
+WORKDIR /app
+
+COPY target/*.jar /app.jar
+
+EXPOSE 8089
+
+ENTRYPOINT ["java", "-jar", "/app.jar"]
