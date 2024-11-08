@@ -46,7 +46,7 @@ public class SkierServiceTest {
 
         List<Skier> result = skierServicesImpl.retrieveAllSkiers();
 
-        assertEquals(1, result.size()); // Changed expected size to 1
+        assertEquals(1, result.size());
         verify(skierRepository, times(1)).findAll();
     }
 
@@ -76,7 +76,7 @@ public class SkierServiceTest {
 
         when(skierRepository.findById(1L)).thenReturn(Optional.of(skier));
         when(subscriptionRepository.findById(2L)).thenReturn(Optional.of(subscription));
-        when(skierRepository.save(any(Skier.class))).thenAnswer(invocation -> invocation.getArgument(0)); // Return the updated skier after save
+        when(skierRepository.save(any(Skier.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Skier result = skierServicesImpl.assignSkierToSubscription(1L, 2L);
 
@@ -93,7 +93,7 @@ public class SkierServiceTest {
         Course course = new Course();
 
         when(skierRepository.save(skier)).thenReturn(skier);
-        when(courseRepository.getById(1L)).thenReturn(course); // Ensure this aligns with method in service
+        when(courseRepository.getById(1L)).thenReturn(course);
 
         Skier result = skierServicesImpl.addSkierAndAssignToCourse(skier, 1L);
 
@@ -132,7 +132,7 @@ public class SkierServiceTest {
 
         when(skierRepository.findById(1L)).thenReturn(Optional.of(skier));
         when(pisteRepository.findById(2L)).thenReturn(Optional.of(piste));
-        when(skierRepository.save(any(Skier.class))).thenAnswer(invocation -> invocation.getArgument(0)); // Return the updated skier after save
+        when(skierRepository.save(any(Skier.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
         Skier result = skierServicesImpl.assignSkierToPiste(1L, 2L);
 
