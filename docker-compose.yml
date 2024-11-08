@@ -1,0 +1,30 @@
+version: '3'
+services:
+  mysql-db:
+    image: mysql:latest
+    container_name: docker-compose-mysql-db
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=stationski
+    networks:
+      - my-network
+
+  spring-boot-app:
+    image: hanine23/ski
+    container_name: docker-compose-spring-boot
+    ports:
+      - "8088:8089"
+    depends_on:
+      - mysql-db
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-compose-mysql-db:3306/stationski?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - my-network
+
+
+networks:
+  my-network:
