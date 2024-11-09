@@ -6,7 +6,7 @@ services:
       - MYSQL_ALLOW_EMPTY_PASSWORD=true
       - MYSQL_DATABASE=stationSki
     ports:
-      - "127.0.0.1:3306:3306"
+      - 3307:3307
     volumes:
       - db:/var/lib/mysql
 
