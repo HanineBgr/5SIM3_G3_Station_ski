@@ -2,7 +2,7 @@ FROM openjdk:11
 
 WORKDIR /app
 
-COPY target/*.jar /app.jar
+COPY "/var/lib/jenkins/workspace/Station Ski/target/*.jar" /app.jar
 
 EXPOSE 8089
 
