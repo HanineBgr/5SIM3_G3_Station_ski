@@ -1,40 +1,29 @@
 services:
-  mysqldb:
-    image: mysql
-    restart: always
-    environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=root
-      - MYSQL_DATABASE=stationSki
+  mysql-db:
+    image: mysql:latest
+    container_name: docker-compose-mysql-db
     ports:
-      - 3307:3306
-    volumes:
-      - db:/var/lib/mysql
+      - "3307:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=stationski
+    networks:
+      - my-network
 
-  app:
+  spring-boot-app:
+    image: ibrahimsaddour/ski
+    container_name: docker-compose-spring-boot
+    ports:
+      - "8088:8089"
     depends_on:
-      - mysqldb
-    build: ./
-    ports:
-      - 8089:8089  # Port remains the same
+      - mysql-db
     environment:
-      SPRING_APPLICATION_JSON: '{
-        "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/stationSki?createDatabaseIfNotExist=true",
-        "spring.datasource.username" : "root",
-        "spring.datasource.password" : null,
-        "spring.jpa.properties.hibernate.dialect" : "org.hibernate.dialect.MySQL5InnoDBDialect",
-        "spring.jpa.hibernate.ddl-auto" : "update",
-        "server.servlet.context-path" : "/api",
-        "server.port" : 8089,
-        "spring.mvc.format.date" : "yyyy-MM-dd",
-        "spring.jpa.show-sql" : true,
-        "logging.level.root" : "info",
-        "logging.pattern.console" : "= %d{yyyy-MM-dd HH:mm:ss} -  %-5level - %logger{45} - %msg %n"
-      }'
-    volumes:
-      - .m2:/root/.m2
-    stdin_open: true
-    tty: true
-    restart: always
+      - SPRING_DATASOURCE_URL=jdbc:mysql://docker-compose-mysql-db:3306/stationski?&createDatabaseIfNotExist=true&useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+    networks:
+      - my-network
 
-volumes:
-  db:
+
+networks:
+  my-network:
