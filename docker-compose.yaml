@@ -3,8 +3,8 @@ services:
     image: mysql
     restart: always
     environment:
-      - MYSQL_ALLOW_EMPTY_PASSWORD=true
-      - MYSQL_DATABASE=stationSki  # Updated to match your database name
+      - MYSQL_ALLOW_EMPTY_PASSWORD=root
+      - MYSQL_DATABASE=stationSki
     ports:
       - 3307:3306
     volumes:
