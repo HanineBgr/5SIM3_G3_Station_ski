@@ -12,7 +12,7 @@
 
 	<groupId>tn.esprit.spring</groupId>
 	<artifactId>gestion-station-ski</artifactId>
-	<version>1.0</version>
+	<version>1.0-SNAPSHOT</version>
 	<name>gestion-station-ski</name>
 	<description>Demo project for Spring Boot</description>
 
