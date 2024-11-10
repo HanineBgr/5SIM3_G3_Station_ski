@@ -10,7 +10,7 @@ services:
       MYSQL_DATABASE: stationSki
       MYSQL_ROOT_PASSWORD: root
     ports:
-      - "3307:3306" # Changed host port to 3307 to avoid conflicts
+      - "3306:3306" # Changed host port to 3307 to avoid conflicts
     volumes:
       - db:/var/lib/mysql
     networks:
