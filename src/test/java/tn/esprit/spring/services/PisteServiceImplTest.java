@@ -16,7 +16,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-public class PisteServiceImplTest {
+class PisteServiceImplTest {
 
     @InjectMocks
     private PisteServicesImpl pisteService;  // This is your service implementation
