@@ -2,8 +2,9 @@ FROM openjdk:11
 
 WORKDIR /app
 
-COPY "/var/lib/jenkins/workspace/StationSki/target/gestion-station-ski-2.0.jar" /app.jar
+ADD "target/gestion-station-ski-2.0.jar" /getion-station-ski-2.0.jar
 
 EXPOSE 8089
 
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "/getion-station-ski-2.0.jar"]
+
