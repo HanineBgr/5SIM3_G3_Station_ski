@@ -16,7 +16,7 @@ services:
     image: onsammar/gestion-station-ski-3.0
     build: ./ 
     ports:
-      - 8089:8089
+      - 8083:8089
     environment:
       SPRING_APPLICATION_JSON: '{
         "spring.datasource.url"  : "jdbc:mysql://mysqldb:3306/stationSki?createDatabaseIfNotExist=true",
