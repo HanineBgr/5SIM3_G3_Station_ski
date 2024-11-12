@@ -36,32 +36,29 @@ services:
     stdin_open: true
     tty: true
     restart: always
+    
   prometheus:
     image: prom/prometheus
-    restart: always
+    container_name: prometheus
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml  
     ports:
       - 9090:9090
-    volumes:
-      - prometheus_data:/prometheus
-      - ./prometheus.yml:/etc/prometheus/prometheus.yml  
     command:
-      - '--config.file=/etc/prometheus/prometheus.yml'
-    depends_on:
-      - app
-
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      
   grafana:
     image: grafana/grafana
-    restart: always
+    container_name: grafana
+    depends_on:
+      - prometheus
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=grafana  
     ports:
       - 3000:3000
     volumes:
-      - grafana_data:/var/lib/grafana
-    environment:
-      - GF_SECURITY_ADMIN_PASSWORD=grafana  
-    depends_on:
-      - prometheus
+      - grafana-storage:/var/lib/grafana
 
 volumes:
   db:
-  prometheus_data:
-  grafana_data:
+    grafana-storage:
