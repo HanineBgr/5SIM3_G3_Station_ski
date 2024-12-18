@@ -6,7 +6,6 @@ This Spring Boot project is designed to streamline ski station management. It le
 - **Management of Skiers** 
 - **Management of Instructors**
 - **Management of Ski Courses**
-- **Gestion des Cours de Ski**
 - **Management of Registrations**
 
 ## 🛠 Tech Stack
